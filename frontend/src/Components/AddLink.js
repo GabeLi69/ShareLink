@@ -1,9 +1,10 @@
 import { directive } from "@babel/types";
 import React from "react";
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import { connect } from "react-redux";
+import { addLink } from "../Redux/actions";
 
-
-export default class AddLink extends React.Component {
+export class AddLink extends React.Component {
     constructor(props){
         super(props);
         
@@ -22,7 +23,12 @@ export default class AddLink extends React.Component {
     };
     
     addLink = (e) => {
-        this.props.onAddLink(this.state.name, this.state.url, this.state.tag);
+        const link = {
+            name: this.state.name,
+            url: this.state.url,
+            tag: this.state.tag
+        }
+        this.props.addLinkMDP(link);
         this.setState({
             modal:false,
             name: "",
@@ -88,6 +94,14 @@ export default class AddLink extends React.Component {
             </div>
         )
     }
-
-
 }
+    
+    const mapDispatchToProps = (dispatch) => {
+        return{
+            addLinkMDP: (link) => dispatch(addLink(link))
+        }
+    }
+
+
+
+export default connect(null, mapDispatchToProps)(AddLink)

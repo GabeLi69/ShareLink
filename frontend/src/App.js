@@ -5,8 +5,11 @@ import React from "react";
 import AddLink from './Components/AddLink';
 import LinkList from './Components/LinkList';
 import SearchLink from './Components/SearchLink';
+import { listLink } from './Redux/actions';
 
-export default class App extends React.Component {
+import { connect } from "react-redux";
+ 
+export class App extends React.Component {
   constructor(props){
     super(props);
 
@@ -18,13 +21,17 @@ export default class App extends React.Component {
     }
   }
 
-    onAddButtonAddLink = (name, url, tag) => {
-      const newLinks = this.state.links.concat([{name, url, tag}]);
-      this.setState({
-        links:newLinks,
-      })
-      localStorage.setItem("links", JSON.stringify(newLinks));
-    }
+  componentDidMount(){
+    this.props.listLinkMDP();
+  }
+
+    // onAddButtonAddLink = (name, url, tag) => {
+    //   const newLinks = this.state.links.concat([{name, url, tag}]);
+    //   this.setState({
+    //     links:newLinks,
+    //   })
+    //   localStorage.setItem("links", JSON.stringify(newLinks));
+    // }
 
     onSearchChange = (search) => {
       this.setState({
@@ -35,7 +42,7 @@ export default class App extends React.Component {
   render(){
     
     var searchLowerCase = this.state.search.toLowerCase();
-    var filteredLinks = this.state.links.filter((link) => {
+    var filteredLinks = this.props.linksMSP.filter((link) => {
       return (
         link.name.toLowerCase().indexOf(searchLowerCase) > -1 ||
         link.url.toLowerCase().indexOf(searchLowerCase) > -1 ||
@@ -60,10 +67,25 @@ export default class App extends React.Component {
             </div>
           </div>
           <div className="col">
-          <AddLink onAddLink={this.onAddButtonAddLink} />
+          {/* <AddLink onAddLink={this.onAddButtonAddLink} /> */}
+          <AddLink/>
           </div>
         </div>
       </div>
     )
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    linksMSP: state.linkStore.linkList
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return{
+      listLinkMDP: () => dispatch(listLink())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
